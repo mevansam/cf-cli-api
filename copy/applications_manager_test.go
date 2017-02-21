@@ -27,9 +27,6 @@ var _ = Describe("Application Manager Tests", func() {
 		err    error
 		logger *cli.Logger
 
-		srcSession  *MockSession
-		destSession *MockSession
-
 		am copy.ApplicationsManager
 		sc copy.ServiceCollection
 	)
@@ -37,17 +34,13 @@ var _ = Describe("Application Manager Tests", func() {
 	BeforeEach(func() {
 		logger = cli.NewLogger(true, "true")
 
-		srcSession = &MockSession{}
-		destSession = &MockSession{}
-
 		am = copy.NewCfCliApplicationsManager()
 		sc = &mockServiceCollection{}
 
 		err = am.Init(srcSession, destSession, logger)
 		if err != nil {
-			panic(err.Error())
+			Fail(err.Error())
 		}
-
 	})
 	AfterEach(func() {
 	})
@@ -55,12 +48,6 @@ var _ = Describe("Application Manager Tests", func() {
 	Context("Copy Applications", func() {
 		It("Should copy applications from source to destination sessions.", func() {
 
-			srcSession.MockGetSessionOrg = func() models.OrganizationFields {
-				return srcOrg
-			}
-			srcSession.MockGetSessionSpace = func() models.SpaceFields {
-				return srcSpace
-			}
 			srcSession.MockAppSummary = func() api.AppSummaryRepository {
 				return &FakeAppSummaryRepository{
 					GetSummariesInCurrentSpaceStub: func() (apps []models.Application, apiErr error) {
@@ -83,12 +70,6 @@ var _ = Describe("Application Manager Tests", func() {
 						return srcDefaultDomain, nil
 					},
 				}
-			}
-			destSession.MockGetSessionOrg = func() models.OrganizationFields {
-				return destOrg
-			}
-			destSession.MockGetSessionSpace = func() models.SpaceFields {
-				return destSpace
 			}
 			destSession.MockApplications = func() applications.Repository {
 				return &FakeApplicationsRepository{
@@ -149,7 +130,7 @@ var _ = Describe("Application Manager Tests", func() {
 						return
 					},
 					CreateStub: func(host string, domain models.DomainFields, path string, port int, useRandomPort bool) (route models.Route, err error) {
-						newRouteGUID := newDestRouteGUIDs[destRouteGUIDCounter]
+						newRouteGUID := fmt.Sprintf("route-%d", destRouteGUIDCounter)
 						destRouteGUIDCounter++
 						destRoutes[newRouteGUID] = models.RouteSummary{
 							GUID:   newRouteGUID,
@@ -269,14 +250,6 @@ func (sc mockServiceCollection) AppBindings(appName string) (bindings []string, 
 
 var timestamp = time.Now().Format(time.RFC3339)
 
-var srcOrg = models.OrganizationFields{
-	GUID: "org-1000",
-	Name: "source-org",
-}
-var srcSpace = models.SpaceFields{
-	GUID: "space-1000",
-	Name: "source-space",
-}
 var srcApps = []models.Application{
 	models.Application{
 		ApplicationFields: models.ApplicationFields{
@@ -327,14 +300,6 @@ var srcDomains = map[string]models.DomainFields{
 }
 var srcDefaultDomain = srcDomains["domain-1000"]
 
-var destOrg = models.OrganizationFields{
-	GUID: "org-2000",
-	Name: "dest-org",
-}
-var destSpace = models.SpaceFields{
-	GUID: "space-2000",
-	Name: "dest-space",
-}
 var destApps = map[string]models.Application{
 	"app-2000": models.Application{
 		ApplicationFields: models.ApplicationFields{
@@ -371,8 +336,7 @@ var destDomains = map[string]models.DomainFields{
 var destDefaultDomain = destDomains["domain-2000"]
 
 var newDestAppGUIDs = []string{"app-2001", "app-2002"}
-var newDestRouteGUIDs = []string{"route-2002", "route-2003", "route-2004"}
-var destRouteGUIDCounter = 0
+var destRouteGUIDCounter = 2002
 
 var srcAppContent = map[string]string{
 	"app-1000": fmt.Sprintf("application bits content for app1: %s", timestamp),
