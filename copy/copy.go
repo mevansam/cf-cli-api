@@ -24,7 +24,7 @@ type ApplicationCollection interface {
 type ServicesManager interface {
 	Init(srcCCSession cli.CfSession,
 		destCCSession cli.CfSession,
-		destTarget, destOrg, destSpace string,
+		serviceKeyFormat string,
 		logger *cli.Logger) error
 
 	ServicesToBeCopied(appNames []string, upsServices []string) (ServiceCollection, error)

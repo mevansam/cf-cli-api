@@ -36,13 +36,13 @@ func NewCfCliServicesManager() ServicesManager {
 func (sm *CfCliServicesManager) Init(
 	srcCCSession cli.CfSession,
 	destCCSession cli.CfSession,
-	destTarget, destOrg, destSpace string,
+	serviceKeyFormat string,
 	logger *cli.Logger) error {
 
 	sm.srcCCSession = srcCCSession
 	sm.destCCSession = destCCSession
 	sm.logger = logger
-	sm.serviceKeyFormat = "__%s_copy_for_" + fmt.Sprintf("/%s/%s/%s", destTarget, destOrg, destSpace)
+	sm.serviceKeyFormat = serviceKeyFormat
 
 	return nil
 }
@@ -75,9 +75,9 @@ func (sm *CfCliServicesManager) ServicesToBeCopied(
 			return nil, err
 		}
 
-		if appNames, contains := utils.ContainsInStrings(appNames, s.ApplicationNames); contains {
+		if boundApps, contains := utils.ContainsInStrings(appNames, s.ApplicationNames); contains {
 
-			serviceInstance.ApplicationNames = appNames
+			serviceInstance.ApplicationNames = boundApps
 			sc.serviceInstancesToCopy = append(sc.serviceInstancesToCopy, serviceInstance)
 
 			keyName := fmt.Sprintf(sm.serviceKeyFormat, serviceInstance.Name)
@@ -191,7 +191,7 @@ func (sm *CfCliServicesManager) DoCopy(services ServiceCollection, recreate bool
 			for _, serviceKey := range serviceInstance.ServiceKeys {
 
 				sm.logger.DebugMessage(
-					"Deleting all service key with GUID %s of service instance %s at destination.",
+					"Deleting service key with GUID %s of service instance %s at destination.",
 					serviceKey.GUID, serviceInstance.Name)
 
 				sm.destCCSession.ServiceKeys().DeleteServiceKey(serviceKey.GUID)
