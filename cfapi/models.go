@@ -1,4 +1,4 @@
-package cli
+package cfapi
 
 // Model structs not present in CF CLI API
 

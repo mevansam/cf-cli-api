@@ -1,4 +1,4 @@
-package cli
+package cfapi
 
 import (
 	"crypto/tls"

@@ -1,4 +1,4 @@
-package cli
+package cfapi
 
 import "code.cloudfoundry.org/cli/cf/configuration"
 

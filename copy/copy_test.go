@@ -2,7 +2,7 @@ package copy_test
 
 import (
 	"code.cloudfoundry.org/cli/cf/models"
-	. "github.com/mevansam/cf-cli-api/cli/mocks"
+	. "github.com/mevansam/cf-cli-api/cfapi/mocks"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 

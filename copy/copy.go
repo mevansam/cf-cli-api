@@ -2,14 +2,14 @@ package copy
 
 import (
 	"code.cloudfoundry.org/cli/cf/models"
-	"github.com/mevansam/cf-cli-api/cli"
+	"github.com/mevansam/cf-cli-api/cfapi"
 )
 
 // ApplicationsManager -
 type ApplicationsManager interface {
-	Init(srcCCSession cli.CfSession,
-		destCCSession cli.CfSession,
-		logger *cli.Logger) error
+	Init(srcCCSession cfapi.CfSession,
+		destCCSession cfapi.CfSession,
+		logger *cfapi.Logger) error
 
 	ApplicationsToBeCopied(appNames []string, copyAsDroplet bool) (ApplicationCollection, error)
 	DoCopy(applications ApplicationCollection, services ServiceCollection, appHostFormat string, appRouteDomain string) error
@@ -22,10 +22,10 @@ type ApplicationCollection interface {
 
 // ServicesManager -
 type ServicesManager interface {
-	Init(srcCCSession cli.CfSession,
-		destCCSession cli.CfSession,
+	Init(srcCCSession cfapi.CfSession,
+		destCCSession cfapi.CfSession,
 		serviceKeyFormat string,
-		logger *cli.Logger) error
+		logger *cfapi.Logger) error
 
 	ServicesToBeCopied(appNames []string, upsServices []string) (ServiceCollection, error)
 	DoCopy(services ServiceCollection, recreate bool) error
@@ -45,6 +45,6 @@ type ApplicationContentProvider interface {
 // ApplicationContent -
 type ApplicationContent interface {
 	App() *models.Application
-	Download(session cli.CfSession) error
-	Upload(session cli.CfSession, params models.AppParams) (models.Application, error)
+	Download(session cfapi.CfSession) error
+	Upload(session cfapi.CfSession, params models.AppParams) (models.Application, error)
 }

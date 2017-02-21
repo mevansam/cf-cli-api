@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/mevansam/cf-cli-api/cli"
+	"github.com/mevansam/cf-cli-api/cfapi"
 )
 
 func main() {
 
-	sessionProvider := cli.NewCfCliSessionProvider()
-	logger := cli.NewLogger(true, "true")
+	sessionProvider := cfapi.NewCfCliSessionProvider()
+	logger := cfapi.NewLogger(true, "true")
 
 	session, err := sessionProvider.NewCfSession(
 		"https://api.local.pcfdev.io",

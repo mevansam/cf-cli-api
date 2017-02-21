@@ -11,15 +11,15 @@ import (
 	"code.cloudfoundry.org/cli/cf/errors"
 	"code.cloudfoundry.org/cli/cf/models"
 	"code.cloudfoundry.org/cli/cf/terminal"
-	"github.com/mevansam/cf-cli-api/cli"
+	"github.com/mevansam/cf-cli-api/cfapi"
 	"github.com/mevansam/cf-cli-api/utils"
 )
 
 // CfCliApplicationsManager -
 type CfCliApplicationsManager struct {
-	srcCCSession  cli.CfSession
-	destCCSession cli.CfSession
-	logger        *cli.Logger
+	srcCCSession  cfapi.CfSession
+	destCCSession cfapi.CfSession
+	logger        *cfapi.Logger
 
 	copier       ApplicationCopier
 	downloadPath string
@@ -39,9 +39,9 @@ func NewCfCliApplicationsManager() ApplicationsManager {
 
 // Init -
 func (am *CfCliApplicationsManager) Init(
-	srcCCSession cli.CfSession,
-	destCCSession cli.CfSession,
-	logger *cli.Logger) error {
+	srcCCSession cfapi.CfSession,
+	destCCSession cfapi.CfSession,
+	logger *cfapi.Logger) error {
 
 	cliConfigPath, err := confighelpers.DefaultFilePath()
 	if err != nil {

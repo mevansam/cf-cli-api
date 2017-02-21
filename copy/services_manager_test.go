@@ -8,8 +8,8 @@ import (
 	"code.cloudfoundry.org/cli/cf/errors"
 	"code.cloudfoundry.org/cli/cf/models"
 
-	"github.com/mevansam/cf-cli-api/cli"
-	. "github.com/mevansam/cf-cli-api/cli/mocks"
+	"github.com/mevansam/cf-cli-api/cfapi"
+	. "github.com/mevansam/cf-cli-api/cfapi/mocks"
 	"github.com/mevansam/cf-cli-api/copy"
 	"github.com/mevansam/cf-cli-api/utils"
 	. "github.com/onsi/ginkgo"
@@ -20,14 +20,14 @@ var _ = Describe("Service Manager Tests", func() {
 
 	var (
 		err    error
-		logger *cli.Logger
+		logger *cfapi.Logger
 
 		sm copy.ServicesManager
 		sc copy.ServiceCollection
 	)
 
 	BeforeEach(func() {
-		logger = cli.NewLogger(true, "true")
+		logger = cfapi.NewLogger(true, "true")
 
 		sm = copy.NewCfCliServicesManager()
 		sc = &mockServiceCollection{}

@@ -11,13 +11,12 @@ import (
 	"code.cloudfoundry.org/cli/cf/i18n"
 	"code.cloudfoundry.org/cli/cf/models"
 	"code.cloudfoundry.org/cli/plugin"
-	"github.com/mevansam/cf-cli-api/cli"
-	"github.com/mevansam/cf-copy-plugin/helpers"
+	"github.com/mevansam/cf-cli-api/cfapi"
 )
 
 // MockSessionProvider -
 type MockSessionProvider struct {
-	MockSessionMap map[string]cli.CfSession
+	MockSessionMap map[string]cfapi.CfSession
 }
 
 // MockSession -
@@ -42,7 +41,7 @@ type MockSession struct {
 	MockRoutes               func() api.RouteRepository
 	MockDomains              func() api.DomainRepository
 
-	MockGetServiceCredentials func(models.ServiceBindingFields) (*cli.ServiceBindingDetail, error)
+	MockGetServiceCredentials func(models.ServiceBindingFields) (*cfapi.ServiceBindingDetail, error)
 	MockDownloadAppContent    func(string, *os.File, bool) error
 	MockUploadDroplet         func(string, string, *os.File) error
 }
@@ -63,7 +62,7 @@ func (p *MockSessionProvider) NewCfSession(
 	orgName string,
 	spaceName string,
 	sslDisabled bool,
-	logger *cli.Logger) (cfSession cli.CfSession, err error) {
+	logger *cfapi.Logger) (cfSession cfapi.CfSession, err error) {
 
 	if i18n.T == nil {
 		i18n.T = i18n.Init(&mockLocale{})
@@ -76,7 +75,7 @@ func (p *MockSessionProvider) NewCfSession(
 func (p *MockSessionProvider) NewCfSessionFromFilepath(
 	cli plugin.CliConnection,
 	configPath string,
-	logger *helpers.Logger) cli.CfSession {
+	logger *cfapi.Logger) cfapi.CfSession {
 
 	if i18n.T == nil {
 		i18n.T = i18n.Init(&mockLocale{})
@@ -185,7 +184,7 @@ func (m *MockSession) ServiceBindings() api.ServiceBindingRepository {
 }
 
 // GetServiceCredentials -
-func (m *MockSession) GetServiceCredentials(serviceBinding models.ServiceBindingFields) (*cli.ServiceBindingDetail, error) {
+func (m *MockSession) GetServiceCredentials(serviceBinding models.ServiceBindingFields) (*cfapi.ServiceBindingDetail, error) {
 	return m.MockGetServiceCredentials(serviceBinding)
 }
 

@@ -1,15 +1,15 @@
 package mock_test
 
 import (
-	"github.com/mevansam/cf-cli-api/cli"
+	"github.com/mevansam/cf-cli-api/cfapi"
 	"github.com/mevansam/cf-cli-api/copy"
 )
 
 // MockApplicationsManager -
 type MockApplicationsManager struct {
-	MockInit func(srcCCSession cli.CfSession,
-		destCCSession cli.CfSession,
-		logger *cli.Logger) error
+	MockInit func(srcCCSession cfapi.CfSession,
+		destCCSession cfapi.CfSession,
+		logger *cfapi.Logger) error
 
 	MockApplicationsToBeCopied func(appNames []string,
 		copyAsDroplet bool) (copy.ApplicationCollection, error)
@@ -30,9 +30,9 @@ func (m *MockApplicationsManager) Close() {
 }
 
 // Init -
-func (m *MockApplicationsManager) Init(srcCCSession cli.CfSession,
-	destCCSession cli.CfSession,
-	logger *cli.Logger) (err error) {
+func (m *MockApplicationsManager) Init(srcCCSession cfapi.CfSession,
+	destCCSession cfapi.CfSession,
+	logger *cfapi.Logger) (err error) {
 
 	if m.MockInit != nil {
 		err = m.MockInit(srcCCSession, destCCSession, logger)

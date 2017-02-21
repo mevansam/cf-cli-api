@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/mevansam/cf-cli-api/cli"
+	"github.com/mevansam/cf-cli-api/cfapi"
 
 	"code.cloudfoundry.org/cli/cf/api/resources"
 	"code.cloudfoundry.org/cli/cf/models"
@@ -64,7 +64,7 @@ func (b *AppBits) App() *models.Application {
 }
 
 // Download -
-func (b *AppBits) Download(session cli.CfSession) (err error) {
+func (b *AppBits) Download(session cfapi.CfSession) (err error) {
 	outputFile, err := os.OpenFile(b.filePath, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
 	defer outputFile.Close()
 	if err != nil {
@@ -79,7 +79,7 @@ func (b *AppBits) Download(session cli.CfSession) (err error) {
 }
 
 // Upload -
-func (b *AppBits) Upload(session cli.CfSession, params models.AppParams) (app models.Application, err error) {
+func (b *AppBits) Upload(session cfapi.CfSession, params models.AppParams) (app models.Application, err error) {
 
 	app, err = session.Applications().Create(params)
 	if err != nil {
@@ -105,7 +105,7 @@ func (d *AppDroplet) App() *models.Application {
 }
 
 // Download -
-func (d *AppDroplet) Download(session cli.CfSession) (err error) {
+func (d *AppDroplet) Download(session cfapi.CfSession) (err error) {
 	outputFile, err := os.OpenFile(d.filePath, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
 	defer outputFile.Close()
 	if err != nil {
@@ -116,7 +116,7 @@ func (d *AppDroplet) Download(session cli.CfSession) (err error) {
 }
 
 // Upload -
-func (d *AppDroplet) Upload(session cli.CfSession, params models.AppParams) (app models.Application, err error) {
+func (d *AppDroplet) Upload(session cfapi.CfSession, params models.AppParams) (app models.Application, err error) {
 
 	app, err = session.Applications().Create(params)
 	if err != nil {

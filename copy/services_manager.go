@@ -5,15 +5,15 @@ import (
 
 	"code.cloudfoundry.org/cli/cf/models"
 	"code.cloudfoundry.org/cli/cf/terminal"
-	"github.com/mevansam/cf-cli-api/cli"
+	"github.com/mevansam/cf-cli-api/cfapi"
 	"github.com/mevansam/cf-cli-api/utils"
 )
 
 // CfCliServicesManager -
 type CfCliServicesManager struct {
-	srcCCSession  cli.CfSession
-	destCCSession cli.CfSession
-	logger        *cli.Logger
+	srcCCSession  cfapi.CfSession
+	destCCSession cfapi.CfSession
+	logger        *cfapi.Logger
 
 	serviceKeyFormat string
 }
@@ -34,10 +34,10 @@ func NewCfCliServicesManager() ServicesManager {
 
 // Init -
 func (sm *CfCliServicesManager) Init(
-	srcCCSession cli.CfSession,
-	destCCSession cli.CfSession,
+	srcCCSession cfapi.CfSession,
+	destCCSession cfapi.CfSession,
 	serviceKeyFormat string,
-	logger *cli.Logger) error {
+	logger *cfapi.Logger) error {
 
 	sm.srcCCSession = srcCCSession
 	sm.destCCSession = destCCSession
