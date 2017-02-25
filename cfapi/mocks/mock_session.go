@@ -10,7 +10,6 @@ import (
 	"code.cloudfoundry.org/cli/cf/api/spaces"
 	"code.cloudfoundry.org/cli/cf/i18n"
 	"code.cloudfoundry.org/cli/cf/models"
-	"code.cloudfoundry.org/cli/plugin"
 	"github.com/mevansam/cf-cli-api/cfapi"
 )
 
@@ -73,15 +72,15 @@ func (p *MockSessionProvider) NewCfSession(
 
 // NewCfSessionFromFilepath -
 func (p *MockSessionProvider) NewCfSessionFromFilepath(
-	cli plugin.CliConnection,
 	configPath string,
-	logger *cfapi.Logger) cfapi.CfSession {
+	sslDisabled bool,
+	logger *cfapi.Logger) (cfapi.CfSession, error) {
 
 	if i18n.T == nil {
 		i18n.T = i18n.Init(&mockLocale{})
 	}
 
-	return p.MockSessionMap[configPath]
+	return p.MockSessionMap[configPath], nil
 }
 
 // Close -

@@ -9,7 +9,7 @@ import (
 type MockServicesManager struct {
 	MockInit func(srcCCSession cfapi.CfSession,
 		destCCSession cfapi.CfSession,
-		destTarget, destOrg, destSpace string,
+		serviceKeyFormat string,
 		logger *cfapi.Logger) error
 
 	MockServicesToBeCopied func(appNames []string,
@@ -30,11 +30,11 @@ func (m *MockServicesManager) Close() {
 // Init -
 func (m *MockServicesManager) Init(srcCCSession cfapi.CfSession,
 	destCCSession cfapi.CfSession,
-	destTarget, destOrg, destSpace string,
+	serviceKeyFormat string,
 	logger *cfapi.Logger) (err error) {
 
 	if m.MockInit != nil {
-		err = m.MockInit(srcCCSession, destCCSession, destTarget, destOrg, destSpace, logger)
+		err = m.MockInit(srcCCSession, destCCSession, serviceKeyFormat, logger)
 	}
 	return
 }
