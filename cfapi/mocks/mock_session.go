@@ -2,8 +2,10 @@ package mock_test
 
 import (
 	"os"
+	"time"
 
 	"code.cloudfoundry.org/cli/cf/api"
+	"code.cloudfoundry.org/cli/cf/api/appevents"
 	"code.cloudfoundry.org/cli/cf/api/applicationbits"
 	"code.cloudfoundry.org/cli/cf/api/applications"
 	"code.cloudfoundry.org/cli/cf/api/organizations"
@@ -20,7 +22,10 @@ type MockSessionProvider struct {
 
 // MockSession -
 type MockSession struct {
+	Logger *cfapi.Logger
+
 	MockHasTarget            func() bool
+	MockSetSessionTarget     func(string, string) error
 	MockGetSessionUsername   func() string
 	MockGetSessionOrg        func() models.OrganizationFields
 	MockSetSessionOrg        func(models.OrganizationFields)
@@ -37,8 +42,12 @@ type MockSession struct {
 	MockAppSummary           func() api.AppSummaryRepository
 	MockApplications         func() applications.Repository
 	MockApplicationBits      func() applicationbits.Repository
+	MockAppEvents            func() appevents.Repository
 	MockRoutes               func() api.RouteRepository
 	MockDomains              func() api.DomainRepository
+
+	MockGetAllEventsInSpace func(time.Time) (map[string]cfapi.CfEvent, error)
+	MockGetAllEventsForApp  func(string, time.Time) (cfapi.CfEvent, error)
 
 	MockGetServiceCredentials func(models.ServiceBindingFields) (*cfapi.ServiceBindingDetail, error)
 	MockDownloadAppContent    func(string, *os.File, bool) error
@@ -67,7 +76,7 @@ func (p *MockSessionProvider) NewCfSession(
 		i18n.T = i18n.Init(&mockLocale{})
 	}
 
-	return &MockSession{}, nil
+	return &MockSession{Logger: logger}, nil
 }
 
 // NewCfSessionFromFilepath -
@@ -87,9 +96,19 @@ func (p *MockSessionProvider) NewCfSessionFromFilepath(
 func (m *MockSession) Close() {
 }
 
+// GetSessionLogger -
+func (m *MockSession) GetSessionLogger() *cfapi.Logger {
+	return m.Logger
+}
+
 // HasTarget -
 func (m *MockSession) HasTarget() bool {
 	return m.MockHasTarget()
+}
+
+// SetSessionTarget -
+func (m *MockSession) SetSessionTarget(orgName, spaceName string) error {
+	return m.MockSetSessionTarget(orgName, spaceName)
 }
 
 // GetSessionUsername -
@@ -167,6 +186,11 @@ func (m *MockSession) ApplicationBits() applicationbits.Repository {
 	return m.MockApplicationBits()
 }
 
+// AppEvents -
+func (m *MockSession) AppEvents() appevents.Repository {
+	return m.MockAppEvents()
+}
+
 // Routes -
 func (m *MockSession) Routes() api.RouteRepository {
 	return m.MockRoutes()
@@ -180,6 +204,18 @@ func (m *MockSession) Domains() api.DomainRepository {
 // ServiceBindings -
 func (m *MockSession) ServiceBindings() api.ServiceBindingRepository {
 	return m.MockServiceBindings()
+}
+
+// GetAllEventsInSpace -
+func (m *MockSession) GetAllEventsInSpace(from time.Time) (events map[string]cfapi.CfEvent, err error) {
+	events, err = m.MockGetAllEventsInSpace(from)
+	return
+}
+
+// GetAllEventsForApp -
+func (m *MockSession) GetAllEventsForApp(appGUID string, from time.Time) (cfEvent cfapi.CfEvent, err error) {
+	cfEvent, err = m.MockGetAllEventsForApp(appGUID, from)
+	return
 }
 
 // GetServiceCredentials -

@@ -11,6 +11,7 @@ import (
 	"github.com/mitchellh/ioprogress"
 
 	"code.cloudfoundry.org/cli/cf/api"
+	"code.cloudfoundry.org/cli/cf/api/appevents"
 	"code.cloudfoundry.org/cli/cf/api/applicationbits"
 	"code.cloudfoundry.org/cli/cf/api/applications"
 	"code.cloudfoundry.org/cli/cf/api/authentication"
@@ -54,11 +55,6 @@ func (p *CfCliSessionProvider) NewCfSession(
 	sslDisabled bool,
 	logger *Logger) (cfSession CfSession, err error) {
 
-	var (
-		org   models.Organization
-		space models.Space
-	)
-
 	cfCliSession := p.createCfSession(
 		coreconfig.NewRepositoryFromPersistor(&noopPersistor{}, func(err error) {
 			if err != nil {
@@ -73,28 +69,20 @@ func (p *CfCliSessionProvider) NewCfSession(
 		Config:       cfCliSession.config,
 		Endpoint:     apiEndPoint,
 	}
-	_, err = acr.Refresh()
-	if err != nil {
+	if _, err = acr.Refresh(); err != nil {
 		return
 	}
 
-	err = cfCliSession.uaa.Authenticate(map[string]string{
+	if err = cfCliSession.uaa.Authenticate(map[string]string{
 		"username": userName,
 		"password": password,
-	})
-	if err != nil {
+	}); err != nil {
 		return
 	}
 
-	if org, err = cfCliSession.Organizations().FindByName(orgName); err != nil {
+	if err = cfCliSession.SetSessionTarget(orgName, spaceName); err != nil {
 		return
 	}
-	if space, err = cfCliSession.Spaces().FindByNameInOrg(spaceName, org.GUID); err != nil {
-		return
-	}
-
-	cfCliSession.SetSessionOrg(org.OrganizationFields)
-	cfCliSession.SetSessionSpace(space.SpaceFields)
 
 	return cfCliSession, nil
 }
@@ -154,9 +142,32 @@ func (s *CfCliSession) Close() {
 	s.config.Close()
 }
 
+// GetSessionLogger -
+func (s *CfCliSession) GetSessionLogger() *Logger {
+	return s.logger
+}
+
 // HasTarget -
 func (s *CfCliSession) HasTarget() bool {
 	return s.config.HasOrganization() && s.config.HasSpace()
+}
+
+// SetSessionTarget -
+func (s *CfCliSession) SetSessionTarget(orgName, spaceName string) (err error) {
+
+	org, err := s.Organizations().FindByName(orgName)
+	if err == nil {
+		for _, space := range org.Spaces {
+
+			if space.Name == spaceName {
+				s.SetSessionOrg(org.OrganizationFields)
+				s.SetSessionSpace(space)
+				return
+			}
+		}
+		err = fmt.Errorf("Unable to initialize session target as space '%s' was not found.", spaceName)
+	}
+	return
 }
 
 // GetSessionUsername -
@@ -237,6 +248,11 @@ func (s *CfCliSession) Applications() applications.Repository {
 // ApplicationBits -
 func (s *CfCliSession) ApplicationBits() applicationbits.Repository {
 	return applicationbits.NewCloudControllerApplicationBitsRepository(s.config, s.ccGateway)
+}
+
+// AppEvents -
+func (s *CfCliSession) AppEvents() appevents.Repository {
+	return appevents.NewCloudControllerAppEventsRepository(s.config, s.ccGateway)
 }
 
 // Routes -

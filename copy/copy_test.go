@@ -11,7 +11,7 @@ import (
 
 func TestCmd(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Copy Managers Suite")
+	RunSpecs(t, "Copy Managers Test Suite")
 }
 
 var srcSession = &MockSession{
