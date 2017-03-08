@@ -47,7 +47,7 @@ func (s *CfCliSession) GetAllEventsInSpace(from time.Time) (events map[string]Cf
 
 	err = s.ccGateway.ListPaginatedResources(
 		s.config.APIEndpoint(),
-		fmt.Sprintf("/v2/events?results-per-page=100&order-direction=asc&q=space_guid:%s&%s", spaceGUID, timeFilter),
+		fmt.Sprintf("/v2/events?results-per-page=100&order-direction=asc&q=space_guid:%s&q=%s", spaceGUID, timeFilter),
 		eventResource{},
 
 		func(resource interface{}) bool {
@@ -99,7 +99,7 @@ func (s *CfCliSession) GetAllEventsForApp(appGUID string, from time.Time) (cfEve
 
 	err = s.ccGateway.ListPaginatedResources(
 		s.config.APIEndpoint(),
-		fmt.Sprintf("/v2/events?results-per-page=100&order-direction=asc&q=actee:%s&%s", appGUID, timeFilter),
+		fmt.Sprintf("/v2/events?results-per-page=100&order-direction=asc&q=actee:%s&q=%s", appGUID, timeFilter),
 		eventResource{},
 
 		func(resource interface{}) bool {
