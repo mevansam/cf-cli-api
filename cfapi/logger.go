@@ -37,6 +37,23 @@ func NewLogger(debug bool, tracePath string) *Logger {
 	return l
 }
 
+// NewFileLogger -
+func NewFileLogger(debug bool, tracePath string, inFile *os.File, outFile *os.File) *Logger {
+
+	l := &Logger{}
+
+	if _, err := os.Stat(tracePath); os.IsExist(err) {
+		l.TracePrinter = trace.NewLogger(outFile, true, tracePath, "")
+	} else {
+		l.TracePrinter = trace.NewLogger(outFile, strings.ToLower(tracePath) == "true", "", "")
+	}
+
+	l.UI = terminal.NewUI(inFile, outFile, terminal.NewTeePrinter(outFile), l.TracePrinter)
+	l.isDebug = debug
+
+	return l
+}
+
 // LogMessage -
 func (l *Logger) LogMessage(format string, v ...interface{}) {
 	l.TracePrinter.Printf(format, v)
