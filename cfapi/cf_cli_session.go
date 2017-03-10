@@ -306,12 +306,16 @@ func (s *CfCliSession) DownloadAppContent(appGUID string, outputFile *os.File, a
 		}
 	}
 	defer response.Body.Close()
-	progressReader := &ioprogress.Reader{
-		Reader:   response.Body,
-		Size:     response.ContentLength,
-		DrawFunc: ioprogress.DrawTerminalf(os.Stdout, drawProgressBar()),
+	if response.ContentLength > 0 {
+		progressReader := &ioprogress.Reader{
+			Reader:   response.Body,
+			Size:     response.ContentLength,
+			DrawFunc: ioprogress.DrawTerminalf(os.Stdout, drawProgressBar()),
+		}
+		_, err = io.Copy(outputFile, progressReader)
+	} else {
+		_, err = io.Copy(outputFile, response.Body)
 	}
-	_, err = io.Copy(outputFile, progressReader)
 	return
 }
 
