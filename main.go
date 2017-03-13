@@ -6,17 +6,23 @@ import (
 	"time"
 
 	"github.com/mevansam/cf-cli-api/cfapi"
+	"github.com/mevansam/cf-cli-api/filters"
+	"github.com/mevansam/cf-cli-api/utils"
 )
 
 func main() {
+
+	var (
+		err error
+	)
 
 	sessionProvider := cfapi.NewCfCliSessionProvider()
 	logger := cfapi.NewLogger(true, "true")
 
 	session, err := sessionProvider.NewCfSession(
-		"https://api.run.pivotal.io",
-		"msamaratunga@pivotal.io", "!1mksKLD",
-		"pcfp", "mevan-dev-2",
+		"https://api.local.pcfdev.io",
+		"admin", "admin",
+		"pcfdev-org", "dev1",
 		true, logger)
 
 	if err != nil {
@@ -30,11 +36,29 @@ func main() {
 		os.Exit(1)
 	}
 
-	events, err := session.GetAllEventsForApp("19b9d70b-6ebe-47d7-9313-f0c213445036", from)
+	apps, err := session.AppSummary().GetSummariesInCurrentSpace()
 	if err != nil {
 		fmt.Printf("ERROR: %s", err.Error())
 		os.Exit(1)
 	}
 
-	logger.DebugMessage("Events: %# v", events)
+	if app, exists := utils.ContainsApp("app1", apps); exists {
+
+		events, err := session.GetAllEventsForApp(app.GUID, from)
+		if err != nil {
+			fmt.Printf("ERROR: %s", err.Error())
+			os.Exit(1)
+		}
+
+		logger.DebugMessage("Events for app '%s/%s': %# v", app.Name, app.GUID, events)
+
+		filter := filters.NewAppEventFilter(session)
+		appEvents, err := filter.GetEventsForApp(app.GUID, from)
+		if err != nil {
+			fmt.Printf("ERROR: %s", err.Error())
+			os.Exit(1)
+		}
+
+		logger.DebugMessage("Application Events for app '%s/%s': %# v", app.Name, app.GUID, appEvents)
+	}
 }
