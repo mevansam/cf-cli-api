@@ -166,9 +166,17 @@ var stateMap = map[string]map[int][]eventState{
 			trigger:   true,
 		}},
 	},
-	"audit.app.map-route": {
+	"audit.app.restage": {
 		-1: []eventState{{
 			stateID:   6,
+			pattern:   "",
+			eventType: EtModified,
+			trigger:   true,
+		}},
+	},
+	"audit.app.map-route": {
+		-1: []eventState{{
+			stateID:   7,
 			pattern:   "",
 			eventType: EtRouteAdded,
 			trigger:   true,
@@ -176,7 +184,7 @@ var stateMap = map[string]map[int][]eventState{
 	},
 	"audit.app.unmap-route": {
 		-1: []eventState{{
-			stateID:   7,
+			stateID:   8,
 			pattern:   "",
 			eventType: EtRouteDeleted,
 			trigger:   true,
@@ -184,7 +192,7 @@ var stateMap = map[string]map[int][]eventState{
 	},
 	"audit.app.delete-request": {
 		-1: []eventState{{
-			stateID:   8,
+			stateID:   9,
 			pattern:   "",
 			eventType: EtDeleted,
 			trigger:   true,
