@@ -65,8 +65,8 @@ type CfSession interface {
 	Routes() api.RouteRepository
 	Domains() api.DomainRepository
 
-	GetAllEventsInSpace(from time.Time) (events map[string]CfEvent, err error)
-	GetAllEventsForApp(appGUID string, from time.Time) (event CfEvent, err error)
+	GetAllEventsInSpace(from time.Time, inclusive bool) (events map[string]CfEvent, err error)
+	GetAllEventsForApp(appGUID string, from time.Time, inclusive bool) (event CfEvent, err error)
 	GetServiceCredentials(models.ServiceBindingFields) (*ServiceBindingDetail, error)
 
 	DownloadAppContent(appGUID string, outputFile *os.File, asDroplet bool) error

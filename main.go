@@ -44,7 +44,7 @@ func main() {
 
 	if app, exists := utils.ContainsApp("app1", apps); exists {
 
-		events, err := session.GetAllEventsForApp(app.GUID, from)
+		events, err := session.GetAllEventsForApp(app.GUID, from, false)
 		if err != nil {
 			fmt.Printf("ERROR: %s", err.Error())
 			os.Exit(1)
@@ -53,7 +53,7 @@ func main() {
 		logger.DebugMessage("Events for app '%s/%s': %# v", app.Name, app.GUID, events)
 
 		filter := filters.NewAppEventFilter(session)
-		appEvents, err := filter.GetEventsForApp(app.GUID, from)
+		appEvents, err := filter.GetEventsForApp(app.GUID, from, false)
 		if err != nil {
 			fmt.Printf("ERROR: %s", err.Error())
 			os.Exit(1)

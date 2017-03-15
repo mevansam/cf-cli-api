@@ -46,8 +46,8 @@ type MockSession struct {
 	MockRoutes               func() api.RouteRepository
 	MockDomains              func() api.DomainRepository
 
-	MockGetAllEventsInSpace func(time.Time) (map[string]cfapi.CfEvent, error)
-	MockGetAllEventsForApp  func(string, time.Time) (cfapi.CfEvent, error)
+	MockGetAllEventsInSpace func(time.Time, bool) (map[string]cfapi.CfEvent, error)
+	MockGetAllEventsForApp  func(string, time.Time, bool) (cfapi.CfEvent, error)
 
 	MockGetServiceCredentials func(models.ServiceBindingFields) (*cfapi.ServiceBindingDetail, error)
 	MockDownloadAppContent    func(string, *os.File, bool) error
@@ -207,14 +207,14 @@ func (m *MockSession) ServiceBindings() api.ServiceBindingRepository {
 }
 
 // GetAllEventsInSpace -
-func (m *MockSession) GetAllEventsInSpace(from time.Time) (events map[string]cfapi.CfEvent, err error) {
-	events, err = m.MockGetAllEventsInSpace(from)
+func (m *MockSession) GetAllEventsInSpace(from time.Time, inclusive bool) (events map[string]cfapi.CfEvent, err error) {
+	events, err = m.MockGetAllEventsInSpace(from, inclusive)
 	return
 }
 
 // GetAllEventsForApp -
-func (m *MockSession) GetAllEventsForApp(appGUID string, from time.Time) (cfEvent cfapi.CfEvent, err error) {
-	cfEvent, err = m.MockGetAllEventsForApp(appGUID, from)
+func (m *MockSession) GetAllEventsForApp(appGUID string, from time.Time, inclusive bool) (cfEvent cfapi.CfEvent, err error) {
+	cfEvent, err = m.MockGetAllEventsForApp(appGUID, from, inclusive)
 	return
 }
 

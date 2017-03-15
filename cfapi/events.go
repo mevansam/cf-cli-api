@@ -37,11 +37,17 @@ type eventResource struct {
 }
 
 // GetAllEventsInSpace -
-func (s *CfCliSession) GetAllEventsInSpace(from time.Time) (events map[string]CfEvent, err error) {
+func (s *CfCliSession) GetAllEventsInSpace(from time.Time, inclusive bool) (events map[string]CfEvent, err error) {
 
 	events = make(map[string]CfEvent)
 	spaceGUID := s.GetSessionSpace().GUID
-	timeFilter := url.QueryEscape(fmt.Sprintf("timestamp>%s", from.Format("2006-01-02 15:04:05-07:00")))
+
+	var timeFilter string
+	if inclusive {
+		timeFilter = url.QueryEscape(fmt.Sprintf("timestamp>=%s", from.Format("2006-01-02 15:04:05-07:00")))
+	} else {
+		timeFilter = url.QueryEscape(fmt.Sprintf("timestamp>%s", from.Format("2006-01-02 15:04:05-07:00")))
+	}
 
 	count := 0
 
@@ -92,9 +98,14 @@ func (s *CfCliSession) GetAllEventsInSpace(from time.Time) (events map[string]Cf
 }
 
 // GetAllEventsForApp -
-func (s *CfCliSession) GetAllEventsForApp(appGUID string, from time.Time) (cfEvent CfEvent, err error) {
+func (s *CfCliSession) GetAllEventsForApp(appGUID string, from time.Time, inclusive bool) (cfEvent CfEvent, err error) {
 
-	timeFilter := url.QueryEscape(fmt.Sprintf("timestamp>%s", from.Format("2006-01-02 15:04:05-07:00")))
+	var timeFilter string
+	if inclusive {
+		timeFilter = url.QueryEscape(fmt.Sprintf("timestamp>=%s", from.Format("2006-01-02 15:04:05-07:00")))
+	} else {
+		timeFilter = url.QueryEscape(fmt.Sprintf("timestamp>%s", from.Format("2006-01-02 15:04:05-07:00")))
+	}
 	count := 0
 
 	err = s.ccGateway.ListPaginatedResources(

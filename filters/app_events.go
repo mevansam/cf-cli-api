@@ -26,9 +26,9 @@ func NewAppEventFilter(session cfapi.CfSession) (filter EventFilter) {
 }
 
 // GetEventsForAllAppsInSpace -
-func (f appEventFilter) GetEventsForAllAppsInSpace(from time.Time) (events []AppEvent, err error) {
+func (f appEventFilter) GetEventsForAllAppsInSpace(from time.Time, inclusive bool) (events []AppEvent, err error) {
 
-	allEvents, err := f.session.GetAllEventsInSpace(from)
+	allEvents, err := f.session.GetAllEventsInSpace(from, inclusive)
 	if err == nil {
 		for _, cfEvent := range allEvents {
 			if cfEvent.Type == "app" {
@@ -40,9 +40,9 @@ func (f appEventFilter) GetEventsForAllAppsInSpace(from time.Time) (events []App
 }
 
 // GetEventsForApp -
-func (f appEventFilter) GetEventsForApp(appGUID string, from time.Time) (events []AppEvent, err error) {
+func (f appEventFilter) GetEventsForApp(appGUID string, from time.Time, inclusive bool) (events []AppEvent, err error) {
 
-	cfEvent, err := f.session.GetAllEventsForApp(appGUID, from)
+	cfEvent, err := f.session.GetAllEventsForApp(appGUID, from, inclusive)
 	if err == nil {
 		if cfEvent.Type == "app" {
 			events = append(events, f.processEvents(cfEvent)...)

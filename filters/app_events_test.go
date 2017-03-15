@@ -29,7 +29,7 @@ var _ = Describe("Application Event Collection Tests", func() {
 		session = &MockSession{Logger: logger}
 		filter = filters.NewAppEventFilter(session)
 
-		session.MockGetAllEventsInSpace = func(from time.Time) (events map[string]cfapi.CfEvent, err error) {
+		session.MockGetAllEventsInSpace = func(from time.Time, inclusive bool) (events map[string]cfapi.CfEvent, err error) {
 			events = make(map[string]cfapi.CfEvent)
 			for guid, cfEvent := range testEvents {
 				eventList := []models.EventFields{}
@@ -43,7 +43,7 @@ var _ = Describe("Application Event Collection Tests", func() {
 			}
 			return
 		}
-		session.MockGetAllEventsForApp = func(appGUID string, from time.Time) (cfEvent cfapi.CfEvent, err error) {
+		session.MockGetAllEventsForApp = func(appGUID string, from time.Time, inclusive bool) (cfEvent cfapi.CfEvent, err error) {
 			cfEvent, ok := testEvents[appGUID]
 			if ok {
 				eventList := []models.EventFields{}
@@ -65,12 +65,12 @@ var _ = Describe("Application Event Collection Tests", func() {
 			from, _ := time.Parse(time.RFC3339, "2017-03-01T00:00:00+04:00")
 			to, _ = time.Parse(time.RFC3339, "2017-03-01T11:11:20+04:00")
 
-			appEvents, err := filter.GetEventsForApp("d9d8b1c8-42a7-4bdf-b337-512232c653ca", from)
+			appEvents, err := filter.GetEventsForApp("d9d8b1c8-42a7-4bdf-b337-512232c653ca", from, false)
 			Expect(err).Should(BeNil())
 			Expect(len(appEvents)).To(Equal(0))
 
 			to, _ = time.Parse(time.RFC3339, "2017-03-01T11:15:55+04:00")
-			appEvents, err = filter.GetEventsForAllAppsInSpace(from)
+			appEvents, err = filter.GetEventsForAllAppsInSpace(from, false)
 			Expect(err).Should(BeNil())
 			Expect(len(appEvents)).To(Equal(1))
 
@@ -80,7 +80,7 @@ var _ = Describe("Application Event Collection Tests", func() {
 
 			from = appEvents[0].Timestamp
 			to, _ = time.Parse(time.RFC3339, "2017-03-01T19:48:15+04:00")
-			appEvents, err = filter.GetEventsForAllAppsInSpace(from)
+			appEvents, err = filter.GetEventsForAllAppsInSpace(from, false)
 			Expect(err).Should(BeNil())
 			Expect(len(appEvents)).To(Equal(1))
 
@@ -90,12 +90,12 @@ var _ = Describe("Application Event Collection Tests", func() {
 
 			from = appEvents[0].Timestamp
 			to, _ = time.Parse(time.RFC3339, "2017-03-01T19:48:35+04:00")
-			appEvents, err = filter.GetEventsForAllAppsInSpace(from)
+			appEvents, err = filter.GetEventsForAllAppsInSpace(from, false)
 			Expect(err).Should(BeNil())
 			Expect(len(appEvents)).To(Equal(0))
 
 			to, _ = time.Parse(time.RFC3339, "2017-03-01T21:20:00+04:00")
-			appEvents, err = filter.GetEventsForAllAppsInSpace(from)
+			appEvents, err = filter.GetEventsForAllAppsInSpace(from, false)
 			Expect(err).Should(BeNil())
 			Expect(len(appEvents)).To(Equal(2))
 
@@ -104,7 +104,7 @@ var _ = Describe("Application Event Collection Tests", func() {
 
 			from = appEvents[1].Timestamp
 			to, _ = time.Parse(time.RFC3339, "2017-03-01T22:32:00+04:00")
-			appEvents, err = filter.GetEventsForAllAppsInSpace(from)
+			appEvents, err = filter.GetEventsForAllAppsInSpace(from, false)
 			Expect(err).Should(BeNil())
 			Expect(len(appEvents)).To(Equal(2))
 
@@ -113,7 +113,7 @@ var _ = Describe("Application Event Collection Tests", func() {
 
 			from = appEvents[1].Timestamp
 			to, _ = time.Parse(time.RFC3339, "2017-03-01T22:43:13+04:00")
-			appEvents, err = filter.GetEventsForAllAppsInSpace(from)
+			appEvents, err = filter.GetEventsForAllAppsInSpace(from, false)
 			Expect(err).Should(BeNil())
 			Expect(len(appEvents)).To(Equal(2))
 
@@ -122,7 +122,7 @@ var _ = Describe("Application Event Collection Tests", func() {
 
 			from = appEvents[1].Timestamp
 			to, _ = time.Parse(time.RFC3339, "2017-03-01T23:59:00+04:00")
-			appEvents, err = filter.GetEventsForAllAppsInSpace(from)
+			appEvents, err = filter.GetEventsForAllAppsInSpace(from, false)
 			Expect(err).Should(BeNil())
 			Expect(len(appEvents)).To(Equal(3))
 
