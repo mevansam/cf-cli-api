@@ -13,7 +13,7 @@ type MockServicesManager struct {
 		logger *cfapi.Logger) error
 
 	MockServicesToBeCopied func(appNames []string,
-		upsServices []string) (copy.ServiceCollection, error)
+		siToCopyAsUpsServices []string, stToCopyAsUpsServices []string) (copy.ServiceCollection, error)
 
 	MockDoCopy func(services copy.ServiceCollection, recreate bool) error
 
@@ -41,10 +41,10 @@ func (m *MockServicesManager) Init(srcCCSession cfapi.CfSession,
 
 // ServicesToBeCopied -
 func (m *MockServicesManager) ServicesToBeCopied(appNames []string,
-	upsServices []string) (sc copy.ServiceCollection, err error) {
+	siToCopyAsUpsServices []string, stToCopyAsUpsServices []string) (sc copy.ServiceCollection, err error) {
 
 	if m.MockServicesToBeCopied != nil {
-		sc, err = m.MockServicesToBeCopied(appNames, upsServices)
+		sc, err = m.MockServicesToBeCopied(appNames, siToCopyAsUpsServices, stToCopyAsUpsServices)
 	}
 	return
 }

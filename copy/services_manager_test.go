@@ -279,7 +279,7 @@ var _ = Describe("Service Manager Tests", func() {
 					},
 				}
 			}
-			sc, err = sm.ServicesToBeCopied([]string{"app1", "app2"}, []string{"svc1"})
+			sc, err = sm.ServicesToBeCopied([]string{"app1", "app2"}, []string{"svc1"}, []string{})
 			if err != nil {
 				Fail(err.Error())
 			}

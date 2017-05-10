@@ -27,7 +27,7 @@ type ServicesManager interface {
 		serviceKeyFormat string,
 		logger *cfapi.Logger) error
 
-	ServicesToBeCopied(appNames []string, upsServices []string) (ServiceCollection, error)
+	ServicesToBeCopied(appNames []string, siToCopyAsUpsServices []string, stToCopyAsUpsServices []string) (ServiceCollection, error)
 	DoCopy(services ServiceCollection, recreate bool) error
 	Close()
 }

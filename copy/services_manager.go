@@ -48,8 +48,8 @@ func (sm *CfCliServicesManager) Init(
 }
 
 // ServicesToBeCopied - Retrieve details of service instances to be copied
-func (sm *CfCliServicesManager) ServicesToBeCopied(
-	appNames []string, copyAsUpsServices []string) (ServiceCollection, error) {
+func (sm *CfCliServicesManager) ServicesToBeCopied(appNames []string,
+	siToCopyAsUpsServices []string, stToCopyAsUpsServices []string) (ServiceCollection, error) {
 
 	sc := &CfCliServiceCollection{
 		destServiceInstanceMap: make(map[string]models.ServiceInstance),
@@ -95,7 +95,11 @@ func (sm *CfCliServicesManager) ServicesToBeCopied(
 				// Managed services copied as a user-provided-service in the target space
 				// will use credentials from a service key created in the source space.
 
-				if _, contains := utils.ContainsInStrings([]string{serviceInstance.Name}, copyAsUpsServices); contains {
+				_, contains := utils.ContainsInStrings([]string{serviceInstance.Name}, siToCopyAsUpsServices)
+				if !contains {
+					_, contains = utils.ContainsInStrings([]string{serviceInstance.ServiceOffering.Label}, stToCopyAsUpsServices)
+				}
+				if contains {
 
 					sm.logger.DebugMessage("Managed service '%s' that will be copied as a user provided service: %# v",
 						serviceInstance.Name, serviceInstance)
